@@ -1,0 +1,50 @@
+{
+	"name": "skill-forge-frontend",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"lint": "eslint .",
+		"preview": "vite preview",
+		"format": "prettier --write ."
+	},
+	"dependencies": {
+		"@emotion/react": "^11.14.0",
+		"@emotion/styled": "^11.14.0",
+		"@fontsource/roboto": "^5.1.1",
+		"@hookform/resolvers": "^3.10.0",
+		"@mui/material": "^6.4.2",
+		"@mui/x-date-pickers": "^7.25.0",
+		"@tanstack/react-query": "^5.66.0",
+		"axios": "^1.7.9",
+		"dayjs": "^1.11.13",
+		"lucide-react": "^0.474.0",
+		"mui-one-time-password-input": "^3.0.2",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"react-hook-form": "^7.54.2",
+		"react-hot-toast": "^2.5.1",
+		"react-imask": "^7.6.1",
+		"react-router": "^7.1.5",
+		"zod": "^3.24.1",
+		"zustand": "^5.0.3"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.17.0",
+		"@trivago/prettier-plugin-sort-imports": "^5.2.2",
+		"@types/node": "^22.13.0",
+		"@types/react": "^18.3.18",
+		"@types/react-dom": "^18.3.5",
+		"@vitejs/plugin-react-swc": "^3.5.0",
+		"eslint": "^9.17.0",
+		"eslint-plugin-react-hooks": "^5.0.0",
+		"eslint-plugin-react-refresh": "^0.4.16",
+		"globals": "^15.14.0",
+		"prettier": "^3.4.2",
+		"typescript": "~5.6.2",
+		"typescript-eslint": "^8.18.2",
+		"vite": "^6.0.5"
+	}
+}
