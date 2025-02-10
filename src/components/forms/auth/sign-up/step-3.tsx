@@ -46,7 +46,7 @@ export const SignUpStep3 = () => {
 		formState: { isValid, errors },
 	} = useForm<SignUpStep3Type>({
 		resolver: zodResolver(signUpStep3Schema),
-		mode: 'onChange',
+		mode: 'all',
 		defaultValues: {
 			phone: formData.phone,
 		},

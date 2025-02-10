@@ -47,6 +47,7 @@ export const SignUpStep4 = () => {
 
 	const {
 		handleSubmit,
+		
 		control,
 		formState: { isValid, errors, isDirty },
 	} = useForm<SignUpStep4Type>({

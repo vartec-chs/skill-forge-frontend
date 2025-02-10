@@ -17,7 +17,7 @@ export const SignUpStep1 = () => {
 		formState: { isValid, errors },
 	} = useForm<SignUpStep1Type>({
 		resolver: zodResolver(signUpStep1Schema),
-		mode: 'onChange',
+		mode: 'all',
 		defaultValues: {
 			firstName: formData.firstName,
 			lastName: formData.lastName,
@@ -43,6 +43,7 @@ export const SignUpStep1 = () => {
 							autoFocus
 							required
 							label='Фамилия'
+							error={!!errors.lastName}
 							helperText={errors.lastName?.message}
 						/>
 					)}
