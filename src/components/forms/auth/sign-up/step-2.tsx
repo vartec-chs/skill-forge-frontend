@@ -44,6 +44,7 @@ export const SignUpStep2 = () => {
 					render={({ field: { onChange, value, ...restField } }) => (
 						<LocalizationProvider dateAdapter={AdapterDayjs}>
 							<DatePicker
+							
 								sx={{ width: '100%' }}
 								label='Дата рождения'
 								format='DD.MM.YYYY'

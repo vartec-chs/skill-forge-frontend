@@ -9,3 +9,8 @@ export type TSuccess<T = any> = {
 	message: string
 	data: T
 }
+
+export type TAuthHook<T = any> = {
+	onSuccess?: (data: TSuccess<T>) => void
+	onError?: (message: string) => void
+}

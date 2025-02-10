@@ -96,6 +96,7 @@ export const SignUpStep4 = () => {
 					render={({ field }) => (
 						<TextField
 							{...field}
+							autoFocus
 							required
 							disabled={isLoading}
 							label='Почта'

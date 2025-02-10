@@ -1,4 +1,5 @@
 import { PATHS } from '@/configs/paths'
+import { useRequestResetPassword } from '@/hooks/auth/useRequestResetPassword'
 import { MuiOtpInput } from 'mui-one-time-password-input'
 import { useNavigate } from 'react-router'
 
@@ -13,6 +14,7 @@ import {
 	Paper,
 	Stack,
 	TextField,
+	Typography,
 } from '@mui/material'
 
 import toast from 'react-hot-toast'
@@ -27,8 +29,6 @@ import { signInSchema, TSignInSchema } from '@zod-schemas/sign-in.schema'
 
 import { useSignIn } from '@hooks/auth/useSignIn'
 
-import { TSuccess } from '@ts/global.types'
-
 const TextMaskCustom = forwardRef<HTMLInputElement, any>(({ onChange, value, ...props }, ref) => (
 	<IMaskInput
 		{...props}
@@ -42,25 +42,30 @@ const TextMaskCustom = forwardRef<HTMLInputElement, any>(({ onChange, value, ...
 
 export const SignInForm = () => {
 	const [isTwoFactor, setIsTwoFactor] = useState(false)
-	const [twoFactorCode, setTwoFactorCode] = useState('')
 	const navigate = useNavigate()
-	const { signInWithEmail, signInWithPhone, isLoading } = useSignIn<TSuccess>({
+	const requestResetPassword = useRequestResetPassword({
+		onSuccess: (data) => toast.success(data.message, { duration: 5000 }),
+		onError: (message: string) => toast.error(message, { duration: 5000 }),
+	})
+	const { signInWithEmail, signInWithPhone, isLoading } = useSignIn({
 		onSuccess: (data) => {
 			if (data.statusCode === 1100) {
 				setIsTwoFactor(true)
+				console.log(`data:`, data)
 				return
 			}
 			toast.success(data.message, { duration: 5000 })
 			navigate(`/${PATHS.DASHBOARD.ROOT}`, { replace: true })
 		},
-		onError: (message: string) => {
-			toast.error(message, { duration: 5000 })
-		},
+		onError: (message: string) => toast.error(message, { duration: 5000 }),
 	})
+
 	const {
 		handleSubmit,
 		control,
 		watch,
+		clearErrors,
+		setError,
 		formState: { isValid, errors, isDirty },
 	} = useForm<TSignInSchema>({
 		resolver: zodResolver(signInSchema),
@@ -72,6 +77,7 @@ export const SignInForm = () => {
 	const isTwoFactorEnabled = isTwoFactor ? watch('twoFactorMailAuthCode', '')?.length !== 6 : false
 
 	const onSubmit = async (data: FieldValues) => {
+		console.log(data)
 		if (isPhone) {
 			await signInWithPhone({
 				phone: data.login,
@@ -85,6 +91,14 @@ export const SignInForm = () => {
 				twoFactorMailAuthCode: data.twoFactorMailAuthCode,
 			})
 		}
+	}
+
+	const onClickForgotPassword = async () => {
+		clearErrors('login')
+		if (isPhone || loginValue === '')
+			return setError('login', { message: 'Введите почту для восстановления пароля' })
+
+		await requestResetPassword.requestResetPassword({ email: loginValue })
 	}
 
 	return (
@@ -101,20 +115,7 @@ export const SignInForm = () => {
 			onSubmit={handleSubmit(onSubmit)}
 		>
 			<Stack spacing={2} direction='column' alignItems='center' justifyContent='center'>
-				{isTwoFactor ? (
-					<Controller
-						name='twoFactorMailAuthCode'
-						control={control}
-						render={({ field }) => (
-							<>
-								<InputLabel sx={{ textAlign: 'left' }} htmlFor='twoFactorMailAuthCode'>
-									Код из письма
-								</InputLabel>
-								<MuiOtpInput id='twoFactorMailAuthCode' length={6} {...field} />
-							</>
-						)}
-					/>
-				) : (
+				{!isTwoFactor ? (
 					<>
 						<Controller
 							name='login'
@@ -144,7 +145,7 @@ export const SignInForm = () => {
 										variant='outlined'
 										type='email'
 										autoFocus
-										disabled={isLoading}
+										disabled={isLoading || requestResetPassword.isLoading}
 										fullWidth
 										error={!!errors.login}
 										helperText={errors.login?.message}
@@ -164,25 +165,64 @@ export const SignInForm = () => {
 										id='password'
 										label='Пароль'
 										type='password'
+										error={!!errors.password}
+										helperText={errors.password?.message}
 									/>
-									{errors.password && (
-										<FormHelperText error>{errors.password.message}</FormHelperText>
-									)}
 								</FormControl>
 							)}
 						/>
 					</>
+				) : (
+					<Controller
+						name='twoFactorMailAuthCode'
+						control={control}
+						render={({ field }) => (
+							<>
+								<Typography variant='body1'>На вашу почту отправлен код</Typography>
+								<MuiOtpInput
+									TextFieldsProps={{ placeholder: '*' }}
+									autoFocus
+									id='twoFactorMailAuthCode'
+									length={6}
+									{...field}
+								/>
+							</>
+						)}
+					/>
 				)}
 
 				<Button
 					size='large'
 					fullWidth
-					disabled={!isDirty || !isValid || isLoading || isTwoFactorEnabled}
+					disabled={
+						!isDirty ||
+						!isValid ||
+						isLoading ||
+						isTwoFactorEnabled ||
+						requestResetPassword.isLoading
+					}
 					type='submit'
 					variant='contained'
 				>
-					{isLoading ? <CircularProgress size={24} /> : 'Войти'}
+					{isLoading || requestResetPassword.isLoading ? <CircularProgress size={24} /> : 'Войти'}
 				</Button>
+
+				{!isTwoFactor && (
+					<Button
+						variant='text'
+						color='inherit'
+						size='large'
+						disabled={isLoading || requestResetPassword.isLoading}
+						onClick={onClickForgotPassword}
+						fullWidth
+					>
+						{isLoading || requestResetPassword.isLoading ? (
+							<CircularProgress size={24} />
+						) : (
+							'Сбросить пароль'
+						)}
+					</Button>
+				)}
 			</Stack>
 		</Paper>
 	)

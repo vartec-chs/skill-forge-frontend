@@ -2,21 +2,25 @@ import { useState } from 'react'
 
 import { axiosErrorHandler } from '@utils/axios-error-handler'
 
-import { authService } from '@api/services/auth.service'
+import { passwordRecoveryService } from '@api/services/password-recovery.service'
 
-import type { ConfirmEmail } from '@ts/confirm-email.types'
 import { TAuthHook, TError } from '@ts/global.types'
+import type { ResetPassword } from '@ts/password-recovery.types'
 
-export const useConfirmEmail = <T>(config?: TAuthHook<T>) => {
+interface IResetPassword<T> extends TAuthHook<T> {
+	onError?: (message: string | TError) => void
+}
+
+export const useResetPassword = <T>(config?: IResetPassword<T>) => {
 	const [isLoading, setIsLoading] = useState(false)
-	const [error, setError] = useState<string | null>(null)
-	const [data, setData] = useState<ConfirmEmail | null>(null)
+	const [error, setError] = useState<TError | string | null>(null)
+	const [data, setData] = useState<T | null>(null)
 
-	const confirmEmail = async (data: ConfirmEmail) => {
+	const resetPassword = async (data: ResetPassword) => {
 		setError(null)
 		setIsLoading(true)
-		await authService
-			.confirmEmail(data)
+		await passwordRecoveryService
+			.resetPassword(data)
 			.then((res) => {
 				setData(res.data)
 				config?.onSuccess?.(res.data)
@@ -26,9 +30,13 @@ export const useConfirmEmail = <T>(config?: TAuthHook<T>) => {
 					if (res.type === 'axios-error') {
 						//type is available here
 						const error = res.error
+						if (error.code === 'ERR_NETWORK') {
+							setError('Network error')
+							config?.onError?.('Network error')
+						}
 						const data = error.response?.data as TError
 						setError(data.message)
-						config?.onError?.(data.message)
+						config?.onError?.(data)
 					} else {
 						setError(res.error.message)
 						config?.onError?.(res.error.message)
@@ -41,6 +49,6 @@ export const useConfirmEmail = <T>(config?: TAuthHook<T>) => {
 		isLoading,
 		error,
 		data,
-		confirmEmail,
+		resetPassword,
 	}
 }

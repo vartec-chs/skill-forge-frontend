@@ -5,6 +5,7 @@ import { axiosErrorHandler } from '@utils/axios-error-handler'
 import { authService } from '@api/services/auth.service'
 
 import type { SingInWithEmail, SingInWithPhone } from '@ts/sign-in.types'
+import { TAuthHook } from '@/ts/global.types'
 
 type TError = {
 	message: string
@@ -12,12 +13,9 @@ type TError = {
 	error: string
 }
 
-interface IUseSignIn<T = any> {
-	onSuccess?: (data: T) => void
-	onError?: (message: string) => void
-}
 
-export const useSignIn = <T>(config?: IUseSignIn<T>) => {
+
+export const useSignIn = <T>(config?: TAuthHook<T>) => {
 	const [isLoading, setIsLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 	const [data, setData] = useState<SingInWithEmail | SingInWithPhone | null>(null)
@@ -36,10 +34,15 @@ export const useSignIn = <T>(config?: IUseSignIn<T>) => {
 					if (res.type === 'axios-error') {
 						//type is available here
 						const error = res.error
+						if (error.code === 'ERR_NETWORK') {
+							setError('Network error')
+							config?.onError?.('Network error')
+						}
 						const data = error.response?.data as TError
 						setError(data.message)
 						config?.onError?.(data.message)
 					} else {
+						console.log(`res.error:`, res)
 						setError(res.error.message)
 						config?.onError?.(res.error.message)
 					}
@@ -62,6 +65,10 @@ export const useSignIn = <T>(config?: IUseSignIn<T>) => {
 					if (res.type === 'axios-error') {
 						//type is available here
 						const error = res.error
+						if (error.code === 'ERR_NETWORK') {
+							setError('Network error')
+							config?.onError?.('Network error')
+						}
 						const data = error.response?.data as TError
 						setError(data.message)
 						config?.onError?.(data.message)

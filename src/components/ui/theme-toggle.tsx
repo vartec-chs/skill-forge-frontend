@@ -6,12 +6,20 @@ import { MoonIcon, SunIcon } from 'lucide-react'
 
 import { useTheme } from '@providers/theme-providers'
 
-export const ThemeToggle: FC = () => {
+interface ThemeToggleProps {
+	size?: number
+}
+
+export const ThemeToggle: FC<ThemeToggleProps> = ({ size = 24 }) => {
 	const { theme, setTheme } = useTheme()
 
 	return (
-		<IconButton size='small' color='inherit' onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-			{theme === 'light' ? <MoonIcon /> : <SunIcon />}
+		<IconButton
+			size={'small'}
+			color='inherit'
+			onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+		>
+			{theme === 'light' ? <MoonIcon size={size} /> : <SunIcon size={size} />}
 		</IconButton>
 	)
 }

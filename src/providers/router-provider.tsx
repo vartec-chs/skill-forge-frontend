@@ -12,8 +12,11 @@ import { DashboardPage } from '@pages/dashboard'
 import { DocsReadPage } from '@pages/docs-read.page'
 
 import { PATHS } from '@configs/paths'
+import { ResetPasswordPage } from '@/pages/auth/reset-password'
 
 export const RouterProvider: FC = () => {
+
+	
 	return (
 		<BrowserRouter>
 			<Routes>
@@ -25,6 +28,7 @@ export const RouterProvider: FC = () => {
 					</Route>
 
 					<Route path={PATHS.AUTH.CONFIRM_EMAIL} element={<ConfirmEmailPage />} />
+					<Route path={PATHS.AUTH.RESET_PASSWORD} element={<ResetPasswordPage />} />
 				</Route>
 				<Route path={PATHS.DOCS.READ} element={<DocsReadPage />} />
 				<Route element={<PrivateRouteLayout />}>

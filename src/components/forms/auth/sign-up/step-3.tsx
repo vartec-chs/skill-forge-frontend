@@ -72,6 +72,7 @@ export const SignUpStep3 = () => {
 					render={({ field: { onChange, onBlur, value, ...restField } }) => (
 						<TextField
 							fullWidth
+							autoFocus
 							label='Телефон'
 							required
 							onBlur={onBlur}

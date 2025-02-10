@@ -4,12 +4,19 @@ import { FC } from 'react'
 
 import { AppBar, Container, Stack, Typography } from '@mui/material'
 
+import { Brain } from 'lucide-react'
+
 import { ThemeToggle } from '@components/ui/theme-toggle'
 
 export const AuthLayout: FC = () => {
 	return (
 		<>
-			<AppBar position='static'>
+			<AppBar
+				position='fixed'
+				sx={(theme) => ({
+					zIndex: theme.zIndex.drawer + 10,
+				})}
+			>
 				<Container maxWidth='xl'>
 					<Stack
 						spacing={2}
@@ -18,11 +25,12 @@ export const AuthLayout: FC = () => {
 						justifyContent='space-between'
 						direction='row'
 					>
+						<Brain width={32} height={32} />
 						<Typography variant='h5' fontWeight='bold'>
-							Skill Forge
+							SkillForge
 						</Typography>
 
-						<ThemeToggle />
+						<ThemeToggle size={32} />
 					</Stack>
 				</Container>
 			</AppBar>
@@ -30,7 +38,7 @@ export const AuthLayout: FC = () => {
 			<Container
 				maxWidth='sm'
 				sx={{
-					height: '80vh',
+					height: '100vh',
 					display: 'flex',
 					flexDirection: 'column',
 					justifyContent: 'center',

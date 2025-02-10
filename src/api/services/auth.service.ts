@@ -1,3 +1,5 @@
+import { PasswordRecoveryRequest } from '@/ts/password-recovery.types'
+
 import { apiInstance } from '@api/api.instance'
 
 import { ConfirmEmail } from '@ts/confirm-email.types'
@@ -34,6 +36,10 @@ class AuthService {
 
 	public async checkAuth() {
 		return await apiInstance.get<TError, TSuccess>(`${this.path}/check-auth`)
+	}
+
+	public async requestResetPassword(data: PasswordRecoveryRequest) {
+		return await apiInstance.post<TError, TSuccess>(`${this.path}/password-recovery/request`, data)
 	}
 }
 

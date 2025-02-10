@@ -40,6 +40,7 @@ export const SignUpStep1 = () => {
 						<TextField
 							fullWidth
 							{...field}
+							autoFocus
 							required
 							label='Фамилия'
 							helperText={errors.lastName?.message}

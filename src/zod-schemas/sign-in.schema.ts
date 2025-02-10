@@ -6,12 +6,11 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 // Схема валидации Zod
 export const signInSchema = z.object({
 	login: z
-		.string()
-		.min(1, 'Поле обязательно')
+		.string({ message: 'Поле обязательно' })
 		.refine((value) => phoneRegex.test(value) || emailRegex.test(value), {
 			message: 'Введите корректный номер телефона или email',
 		}),
-	password: z.string().min(1, 'Поле обязательно').min(8, 'Пароль должен быть длиннее 8 символов'),
+	password: z.string({ message: 'Поле обязательно' }).min(8, 'Пароль должен быть длиннее 8 символов'),
 	twoFactorMailAuthCode: z.string().optional(),
 })
 
